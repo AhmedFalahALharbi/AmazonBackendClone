@@ -24,7 +24,6 @@ namespace AmazonBackend.Controllers
             _orderRepository = orderRepository;
         }
 
-
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto orderDto)
         {
@@ -39,7 +38,7 @@ namespace AmazonBackend.Controllers
                                          .ToDictionaryAsync(p => p.ProductId);
 
             if (products.Count != productIds.Count)
-                return BadRequest(new { error = "Some products were not." });
+                return BadRequest(new { error = "Some products were not found." });
 
             var order = new Order
             {
@@ -78,13 +77,36 @@ namespace AmazonBackend.Controllers
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
                 return Unauthorized(new { error = "Invalid user ID in token." });
 
-            var orders = await _orderRepository.GetOrdersByCustomerId(userId);
-            var order = orders.FirstOrDefault(o => o.OrderId == id);
+            // Using EF Core eager loading to fetch order with related entities
+            var order = await _context.Orders
+                .Where(o => o.OrderId == id && o.UserId == userId)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.User)
+                .FirstOrDefaultAsync();
 
             if (order == null)
                 return NotFound(new { error = "Order not found or unauthorized access." });
 
             return Ok(order);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserOrders()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized(new { error = "Invalid user ID in token." });
+
+            // Using EF Core eager loading to fetch orders with related entities
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return Ok(orders);
         }
     }
 }

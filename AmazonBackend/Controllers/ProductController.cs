@@ -3,24 +3,39 @@ using Microsoft.AspNetCore.Authorization;
 using AmazonBackend.DTOs;
 using AmazonBackend.Models;
 using AmazonBackend.Repositories;
+using Microsoft.EntityFrameworkCore;
+using AmazonBackend.Data;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace AmazonBackend.Controllers
 {
-    [Authorize(Roles = "Admin")] // Only Admins can add or update products
     [Route("api/products")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly AppDbContext _context;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository, AppDbContext context)
         {
             _productRepository = productRepository;
+            _context = context;
+        }
+
+        // Get all products - accessible to all users
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            // Using EF Core for product listing
+            var products = await _context.Products.ToListAsync();
+            return Ok(products);
         }
 
         // Adds a new product to the database.
         [HttpPost]
+        [Authorize(Roles = "Admin")] // Only Admins can add products
         public async Task<IActionResult> AddProduct([FromBody] ProductDto productDto)
         {
             var product = new Product
@@ -31,11 +46,15 @@ namespace AmazonBackend.Controllers
                 Stock = productDto.Stock
             };
 
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
             return Ok("Product added successfully.");
         }
 
         // Updates an existing product in the database.
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")] // Only Admins can update products
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
         {
             var product = await _productRepository.GetProductById(id);

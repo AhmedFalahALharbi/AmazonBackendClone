@@ -178,3 +178,4 @@ C:\Users\a7mad\Desktop\vsFolder\TaibahValley\AmazonBackendClone\AmazonBackend\ob
 C:\Users\a7mad\Desktop\vsFolder\TaibahValley\AmazonBackendClone\AmazonBackend\obj\Debug\net9.0\AmazonBackend.pdb
 C:\Users\a7mad\Desktop\vsFolder\TaibahValley\AmazonBackendClone\AmazonBackend\obj\Debug\net9.0\AmazonBackend.genruntimeconfig.cache
 C:\Users\a7mad\Desktop\vsFolder\TaibahValley\AmazonBackendClone\AmazonBackend\obj\Debug\net9.0\ref\AmazonBackend.dll
+C:\Users\a7mad\Desktop\vsFolder\TaibahValley\AmazonBackendClone\AmazonBackend\obj\Debug\net9.0\AmazonBackend.sourcelink.json
