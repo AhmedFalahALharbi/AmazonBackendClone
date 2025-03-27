@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\AmazonBackend.props" />
+</Project>

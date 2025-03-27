@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "QyBqLgt+Qr9PWKyQ2aGoRAE0UT8XLEfeiVYjH7lhmyE=",
+  "Source": "AmazonBackend",
+  "BasePath": "_content/AmazonBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
